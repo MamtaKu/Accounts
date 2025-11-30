@@ -1,6 +1,6 @@
 services:
   rabbit:
-    image: rabbitmq:3.13-management
+    image: rabbitmq:4-management
     hostname: rabbitmq
     ports:
       - "5672:5672"
@@ -24,7 +24,7 @@ services:
       rabbit:
         condition: service_healthy
     healthcheck:
-      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
+      test: ["CMD-SHELL", "nc -z localhost 8071 && (echo -e 'GET /actuator/health HTTP/1.1\\r\\nHost: localhost\\r\\n\\r\\n' | nc localhost 8071 | grep -q '\"status\":\"UP\"') || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 10
